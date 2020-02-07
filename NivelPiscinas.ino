@@ -1,12 +1,12 @@
 /***************
-Nivel Automático para Tanques 
+Nivel Automatico para Tanques 
 Autor: Victor Correia
-Versão 1.0
+Versao 1.0
 Data: 07/08/2019
-Alterado em:
+Alterado em: 07/02/2020
 ***************/
 
-#define RELE 13
+#define RELE 12
 #define VERDE 9
 #define VERMELHO 10
 #define NIVEL_BAIXO 7
@@ -14,8 +14,7 @@ Alterado em:
 
 bool flag = 0;
 
-void setup() {
-  // put your setup code here, to run once:
+void setup() {  
   Serial.begin(9600); 
   pinMode(RELE, OUTPUT);
   pinMode(VERDE, OUTPUT);
@@ -26,25 +25,41 @@ void setup() {
   digitalWrite(NIVEL_ALTO, HIGH);
   digitalWrite(VERDE, LOW);
   digitalWrite(VERMELHO, LOW);
+  digitalWrite(RELE, LOW);
+  Serial.print(NIVEL_BAIXO);
+  if(digitalRead(NIVEL_BAIXO) == 0){ //Verifica estado inicial do nivel baixo
+    flag = 1;
+    digitalWrite(VERMELHO, HIGH);
+  }
 }
 
-void loop() {
-  
-  bool flag;
+void loop() { 
+  if(digitalRead(NIVEL_BAIXO) == 1 && digitalRead(NIVEL_ALTO) == 0){
+    while(1){
+      digitalWrite(VERMELHO, LOW);
+      digitalWrite(VERDE, LOW);
+      delay(100);
+      digitalWrite(VERMELHO, HIGH);
+      digitalWrite(VERDE, HIGH);
+      delay(100);  
+    }
+  }
   if(digitalRead(NIVEL_BAIXO) == 1 && flag == 0){
     flag = 1;
-    digitalWrite(RELE, HIGH);
+    digitalWrite(RELE, LOW);
     digitalWrite(VERDE, LOW);
     digitalWrite(VERMELHO, HIGH);
     Serial.println("Vazio");      
   }
   if(digitalRead(NIVEL_ALTO) == 0 && flag == 1){
     flag = 0;
-    digitalWrite(RELE, LOW);
+    digitalWrite(RELE, HIGH);
     digitalWrite(VERDE, HIGH);
     digitalWrite(VERMELHO, LOW);
     Serial.println("Cheio");      
-  }   
-  Serial.println(flag);
-  Serial.println(digitalRead(NIVEL_BAIXO));
+  }
+     
+  //Serial.println(flag);
+  //Serial.println(digitalRead(NIVEL_BAIXO));
 }  
+
